@@ -14,6 +14,8 @@
       var placeX = 100;
       var placeY =  200;
       var points = 0;
+      var lives = 3;
+
 
       var circle = function (x, y, r, color) {
       ctx.beginPath();
@@ -29,6 +31,18 @@
       ctx.fillStyle = color;
       ctx.fill();
     }
+
+    var livesImg = function(){
+    var live=new Image(); //creates a variable for a new image
+    live.src= "heart.jpg" //image's location
+       if(lives>=1){
+         ctx.drawImage(live,900,20); 
+          if(lives>=2)
+             ctx.drawImage(live,850,20); 
+              if(lives>=3)
+                 ctx.drawImage(live,800,20); 
+    }
+  }
 
     var clear = function() {
       ctx.clearRect(0, 0, width, height);
@@ -71,20 +85,20 @@
       document.getElementById("numOfPoints").innerHTML = points;
       drawItem(placeX, placeY);
       circle(x, y, r, "#2dbdfc");
-      movesquere (x, y, rectx, recty);
+      moveRect (x, y, rectx, recty);
       ctx.fillStyle = "white";
       ctx.strokeStyle = "black";
       rect(rectx, recty,rectSize,rectSize, "#f5c4b6");
-      if (isTouch(x,y, r, Math.round(rectx),Math.round(recty), rectSize)) {
-        document.getElementById("ending").style.display='block';
-        document.getElementById("canvas").style.display='none';
-        document.getElementById("gameTool").style.display='none';
-        document.getElementById("endPoints").innerHTML = points;
-        clearInterval(Game);
+      livesImg();
+      if (isTouch(x,y, r, Math.round(rectx),Math.round(recty), rectSize)) { 
+        lives--;
+        rePlaceRect();
+        if (lives==-1)
+          gameEnd();
       }
    }
 
-    var movesquere = function(x, y, rectanglex, rectangley){ //moves the rect towards the  circle
+    var moveRect= function(x, y, rectanglex, rectangley){ //moves the rect towards the  circle
       var veex = x - rectanglex;
       var veey = y - rectangley;
       var undu = Math.sqrt((Math.pow(veey,2))+(Math.pow(veex,2)));
@@ -96,6 +110,11 @@
       recty += my;
   }
 
+  var rePlaceRect = function() {
+    rectx = 900;
+    recty = 500;
+  }
+
     var isTouch = function(x, y, r, rectx, recty, rects) {  //Checks collisions bewtween the objects
       var l = Math.min(Math.abs(x-rectx),Math.abs(x-rectx-rects));
       var h = Math.min(Math.abs(y-recty),Math.abs(y-recty-rects));
@@ -103,6 +122,15 @@
         return true;
         return false;
   }
+
+    //actions to happen at the end of the game
+    var gameEnd = function() {
+        document.getElementById("ending").style.display='block';
+        document.getElementById("canvas").style.display='none';
+        document.getElementById("gameTool").style.display='none';
+        document.getElementById("endPoints").innerHTML = points;
+        clearInterval(Game);
+    }
 
   //the function places a new item
   var placeNewItem = function() {
@@ -130,8 +158,7 @@ var checkAndPlaceItem = function(x,y,placeX,placeY,r){
     if (l<=r&&k<=r){
       placeNewItem(); 
       points++;
-    }
-    
+    }   
 }
  
     var Game = init();
